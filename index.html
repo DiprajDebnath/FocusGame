@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus</title>
+    <style>
+        html {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .box>div {
+            margin: 10px;
+        }
+
+        .parent {
+            display: grid;
+            grid-template-columns: 80px 80px 80px 80px 80px 80px;
+            background-color: #2196F3;
+            padding: 10px;
+        }
+
+        .child {
+            background-color: #ffffffcc;
+            border: 1px solid #000000cc;
+            padding: 20px;
+            font-size: 30px;
+            text-align: center;
+        }
+
+        .correct {
+            background-color: #6ECB63;
+            border: 1px solid #000000cc;
+            padding: 20px;
+            font-size: 30px;
+            text-align: center;
+        }
+
+        .wrong {
+            background-color: #EB1D36;
+            border: 1px solid #000000cc;
+            padding: 20px;
+            font-size: 30px;
+            text-align: center;
+        }
+
+        .start_btn {
+            display: inline-block;
+            padding: 15px 25px;
+            font-size: 24px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            outline: none;
+            color: #fff;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 9px #999;
+        }
+
+        .start_btn:hover {
+            background-color: #3e8e41
+        }
+
+        .start_btn:active {
+            background-color: #3e8e41;
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+        }
+
+        .reset_btn {
+            display: inline-block;
+            padding: 15px 25px;
+            font-size: 24px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            outline: none;
+            color: #fff;
+            background-color: #f31010;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 9px #999;
+            display: none;
+        }
+
+        .reset_btn:hover {
+            background-color: #f31010
+        }
+
+        .reset_btn:active {
+            background-color: #f31010;
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+        }
+
+        .timerBox {
+            font-size: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            border-style: groove;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        footer {
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <div class="timerBox">Time &nbsp; <span class="timerDisplay"> 00 : 00 : 000 </span></div>
+        <div class="parent" id="parent"></div>
+        <div>
+            <button class="start_btn" id="start_btn">Start</button>
+            <button class="reset_btn" id="reset_btn">Reset</button>
+        </div>
+    </div>
+    <footer>
+        <p> &copy;Dipraj Debnath</p>
+    </footer>
+</body>
+
+<script>
+    // // display the board
+    // document.body.onload = addElement;
+
+    // start button
+    document.getElementById('start_btn').addEventListener('click', () => {
+        if (int !== null) {
+            clearInterval(int);
+        }
+        int = setInterval(displayTimer, 10);
+
+        // display the board
+        addElement();
+        count = 1;
+        // hide start button
+        document.getElementById('start_btn').style.display = 'none';
+        // make reset button visible
+        document.getElementById('reset_btn').style.display = 'block';
+    });
+
+    // pause
+    // document.getElementById('pauseTimer').addEventListener('click', () => {
+    //     clearInterval(int);
+    // });
+
+    // reset button
+    document.getElementById('reset_btn').addEventListener('click', () => {
+        clearInterval(int);
+        [milliseconds, seconds, minutes, hours] = [0, 0, 0];
+        timerRef.innerHTML = '00 : 00 : 000';
+
+        // remove  child 
+        const list = document.getElementById("parent");
+
+        while (list.hasChildNodes()) {
+            list.removeChild(list.firstChild);
+        }
+        // hide reset button
+        document.getElementById('reset_btn').style.display = 'none';
+        // make start button visible
+        document.getElementById('start_btn').style.display = 'block';
+    });
+
+    // On clicking numbers verify
+    let count = 1;
+    function verify(div) {
+        if (div.innerHTML == count) {
+            div.classList.add('correct');
+            if (count === 30) {
+                clearInterval(int);
+                // hide start button
+                document.getElementById('start_btn').style.display = 'none';
+                // make reset button visible
+                document.getElementById('reset_btn').style.display = 'block';
+            }
+            count++;
+        }
+        else {
+            div.classList.add('wrong');
+            setTimeout(function () {
+                div.classList.remove("wrong");
+            }, 150);
+        }
+    }
+
+    // Generate random numbers
+    function myRandomInts(quantity, max) {
+        const set = new Set()
+        while (set.size < quantity) {
+            set.add(Math.floor(Math.random() * max) + 1)
+        }
+        return set;
+    }
+
+    // Add elements to grid
+    function addElement() {
+        // remove existing child if present
+        const list = document.getElementById("parent");
+
+        while (list.hasChildNodes()) {
+            list.removeChild(list.firstChild);
+        }
+
+        const randomList = myRandomInts(30, 30);
+        randomList.forEach(function (value) {
+            // create a new div element
+            const newDiv = document.createElement("div");
+
+            // add class child
+            newDiv.classList.add("child");
+
+            // add enent listener
+            newDiv.addEventListener('click', () => {
+                verify(newDiv);
+            });
+
+            // give it some content
+            const newContent = document.createTextNode(value);
+
+            // add the text node to the newly created div
+            newDiv.appendChild(newContent);
+
+            // add the newly created element and its content into the DOM
+            const currentDiv = document.getElementById("parent");
+            currentDiv.insertAdjacentElement("beforeend", newDiv);
+        });
+    }
+
+    // Timer Code
+    let [milliseconds, seconds, minutes] = [0, 0, 0];
+    let timerRef = document.querySelector('.timerDisplay');
+    let int = null;
+
+
+    function displayTimer() {
+        milliseconds += 10;
+        if (milliseconds == 1000) {
+            milliseconds = 0;
+            seconds++;
+            if (seconds == 60) {
+                seconds = 0;
+                minutes++;
+                if (minutes == 60) {
+                    minutes = 0;
+                }
+            }
+        }
+
+        let m = minutes < 10 ? "0" + minutes : minutes;
+        let s = seconds < 10 ? "0" + seconds : seconds;
+        let ms = milliseconds < 10 ? "00" + milliseconds : milliseconds < 100 ? "0" + milliseconds : milliseconds;
+
+        timerRef.innerHTML = ` ${m} : ${s} : ${ms}`;
+    }
+</script>
+
+</html>
