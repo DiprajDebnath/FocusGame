@@ -121,6 +121,12 @@
             padding: 10px;
         }
 
+        .prevent-select {
+          -webkit-user-select: none; /* Safari */
+          -ms-user-select: none; /* IE 10 and IE 11 */
+          user-select: none; /* Standard syntax */
+        }
+        
         footer {
             left: 0;
             bottom: 0;
@@ -133,7 +139,7 @@
 <body>
     <div class="box">
         <div class="timerBox">Time &nbsp; <span class="timerDisplay"> 00 : 00 : 000 </span></div>
-        <div class="parent" id="parent"></div>
+        <div class="parent prevent-select" id="parent"></div>
         <div>
             <button class="start_btn" id="start_btn">Start</button>
             <button class="reset_btn" id="reset_btn">Reset</button>
