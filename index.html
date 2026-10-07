@@ -7,16 +7,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Focus</title>
     <style>
-        html {
-            height: 100%;
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
         }
 
         body {
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            height: 100%;
             background-color: rgb(89, 89, 89);
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
         }
 
         .box {
@@ -24,6 +30,7 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            width: 100%;
         }
 
         .box>div {
@@ -31,53 +38,60 @@
         }
 
         .parent {
+            /* cell size adapts to both screen width and height, capped at 90px */
+            --cell: clamp(40px, min((100vw - 40px) / 6, (100dvh - 230px) / 5), 90px);
             display: grid;
-            grid-template-columns: 80px 80px 80px 80px 80px 80px;
+            grid-template-columns: repeat(6, var(--cell));
+            grid-auto-rows: var(--cell);
             background-color: #2196F3;
             padding: 10px;
+            max-width: 100%;
         }
 
         .child {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background-color: #ffffffcc;
             border: 1px solid #000000cc;
-            padding: 20px;
-            font-size: 30px;
+            font-size: calc(var(--cell) * 0.38);
             text-align: center;
+            cursor: pointer;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .correct {
             background-color: #6ECB63;
-            border: 1px solid #000000cc;
-            padding: 20px;
-            font-size: 30px;
-            text-align: center;
         }
 
         .wrong {
             background-color: #EB1D36;
-            border: 1px solid #000000cc;
-            padding: 20px;
-            font-size: 30px;
-            text-align: center;
         }
 
-        .start_btn {
+        .start_btn,
+        .reset_btn {
             display: inline-block;
-            padding: 15px 25px;
-            font-size: 24px;
+            padding: 0.6em 1.05em;
+            font-size: clamp(18px, 4.5vw, 24px);
             cursor: pointer;
             text-align: center;
             text-decoration: none;
             outline: none;
             color: #fff;
-            background-color: #4CAF50;
             border: none;
             border-radius: 15px;
             box-shadow: 0 9px #999;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .start_btn {
+            background-color: #4CAF50;
         }
 
         .start_btn:hover {
-            background-color: #3e8e41
+            background-color: #3e8e41;
         }
 
         .start_btn:active {
@@ -87,23 +101,12 @@
         }
 
         .reset_btn {
-            display: inline-block;
-            padding: 15px 25px;
-            font-size: 24px;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            outline: none;
-            color: #fff;
             background-color: #f31010;
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 9px #999;
             display: none;
         }
 
         .reset_btn:hover {
-            background-color: #f31010
+            background-color: #f31010;
         }
 
         .reset_btn:active {
@@ -112,8 +115,14 @@
             transform: translateY(4px);
         }
 
+        .start_btn:focus-visible,
+        .reset_btn:focus-visible {
+            outline: 3px solid #fff;
+            outline-offset: 3px;
+        }
+
         .timerBox {
-            font-size: 25px;
+            font-size: clamp(18px, 5vw, 25px);
             display: flex;
             align-items: center;
             justify-content: space-around;
@@ -121,19 +130,22 @@
             border-radius: 5px;
             padding: 10px;
             color: white;
+            max-width: 100%;
         }
 
         .prevent-select {
-          -webkit-user-select: none; /* Safari */
-          -ms-user-select: none; /* IE 10 and IE 11 */
-          user-select: none; /* Standard syntax */
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10 and IE 11 */
+            user-select: none; /* Standard syntax */
         }
-        
+
         footer {
-            left: 0;
-            bottom: 0;
             width: 100%;
             text-align: center;
+        }
+
+        footer p {
+            margin: 0.5em 0;
         }
     </style>
 </head>
@@ -153,9 +165,6 @@
 </body>
 
 <script>
-    // // display the board
-    // document.body.onload = addElement;
-
     // start button
     document.getElementById('start_btn').addEventListener('click', () => {
         if (int !== null) {
@@ -172,15 +181,10 @@
         document.getElementById('reset_btn').style.display = 'block';
     });
 
-    // pause
-    // document.getElementById('pauseTimer').addEventListener('click', () => {
-    //     clearInterval(int);
-    // });
-
     // reset button
     document.getElementById('reset_btn').addEventListener('click', () => {
         clearInterval(int);
-        [milliseconds, seconds, minutes, hours] = [0, 0, 0];
+        [milliseconds, seconds, minutes] = [0, 0, 0];
         timerRef.innerHTML = '00 : 00 : 000';
 
         // remove  child 
@@ -243,7 +247,7 @@
             // add class child
             newDiv.classList.add("child");
 
-            // add enent listener
+            // add event listener
             newDiv.addEventListener('click', () => {
                 verify(newDiv);
             });
